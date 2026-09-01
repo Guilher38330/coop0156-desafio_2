@@ -265,11 +265,138 @@
       -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // O candidato deve preencher a integração aqui.
-
             const form = document.getElementById('form-analise');
+            const btnSolicitar = document.getElementById('btn-solicitar');
+            const txtSolicitar = document.getElementById('txt-solicitar');
+            const loadingSpinner = document.getElementById('loading-spinner');
 
-            // TODO: Adicionar Event Listeners e requisições para a API Laravel.
+            // Elementos de resultado
+            const resultadoVazio = document.getElementById('resultado-vazio');
+            const resultadoAnalise = document.getElementById('resultado-analise');
+            const statusBadge = document.getElementById('status-indicator-badge');
+            const dadosAprovado = document.getElementById('dados-aprovado');
+            const dadosReprovado = document.getElementById('dados-reprovado');
+            const containerContratacao = document.getElementById('container-contratacao');
+
+            /**
+             * Formata um valor numérico para moeda brasileira (R$ X.XXX,XX).
+             */
+            function formatarMoeda(valor) {
+                return parseFloat(valor).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                });
+            }
+
+            /**
+             * Alterna o estado de loading do botão de submit.
+             */
+            function setLoading(loading) {
+                btnSolicitar.disabled = loading;
+                txtSolicitar.classList.toggle('hidden', loading);
+                loadingSpinner.classList.toggle('hidden', !loading);
+            }
+
+            /**
+             * Exibe o card de resultado com os dados da análise.
+             */
+            function exibirResultado(analise) {
+                resultadoVazio.classList.add('hidden');
+                resultadoAnalise.classList.remove('hidden');
+
+                // Preencher dados comuns
+                document.getElementById('res-nome').textContent = analise.nome;
+                document.getElementById('res-cpf').textContent = analise.cpf;
+                document.getElementById('res-score').textContent = analise.score ?? '—';
+
+                const statusEl = document.getElementById('res-status');
+
+                if (analise.status === 'aprovado') {
+                    // Status e badge
+                    statusEl.textContent = 'APROVADO';
+                    statusEl.className = 'font-bold text-emerald-400';
+                    statusBadge.innerHTML = '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aprovado</span>';
+
+                    // Dados de aprovação
+                    dadosAprovado.classList.remove('hidden');
+                    dadosReprovado.classList.add('hidden');
+                    document.getElementById('res-taxa').textContent = parseFloat(analise.taxa_juros).toFixed(1).replace('.', ',') + '% a.m.';
+                    document.getElementById('res-parcela').textContent = formatarMoeda(analise.valor_parcela);
+
+                    const comprometimento = ((parseFloat(analise.valor_parcela) / parseFloat(analise.renda_mensal)) * 100).toFixed(1);
+                    document.getElementById('res-comprometimento').textContent = comprometimento.replace('.', ',') + '%';
+
+                    // Botão para simulação
+                    containerContratacao.classList.remove('hidden');
+                    const btnContratar = document.getElementById('btn-contratar');
+                    const txtContratar = document.getElementById('txt-contratar');
+                    txtContratar.textContent = 'Ver Simulação e Contratar';
+
+                    btnContratar.onclick = function () {
+                        window.location.href = '/simulacao/' + analise.id;
+                    };
+                } else {
+                    // Status e badge
+                    statusEl.textContent = 'REPROVADO';
+                    statusEl.className = 'font-bold text-red-400';
+                    statusBadge.innerHTML = '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">Reprovado</span>';
+
+                    // Dados de reprovação
+                    dadosReprovado.classList.remove('hidden');
+                    dadosAprovado.classList.add('hidden');
+                    containerContratacao.classList.add('hidden');
+                    document.getElementById('res-motivo').textContent = analise.motivo_rejeicao;
+                }
+            }
+
+            // Submit do formulário
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setLoading(true);
+
+                // Coletar dados e limpar CPF
+                const cpfRaw = document.getElementById('cpf').value;
+                const cpf = cpfRaw.replace(/\D/g, '');
+
+                const payload = {
+                    nome: document.getElementById('nome').value,
+                    cpf: cpf,
+                    renda_mensal: parseFloat(document.getElementById('renda_mensal').value),
+                    tipo_credito: document.getElementById('tipo_credito').value,
+                    valor_solicitado: parseFloat(document.getElementById('valor_solicitado').value),
+                };
+
+                try {
+                    const response = await fetch('/api/analise-credito', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.status === 422) {
+                        // Erros de validação
+                        const erros = data.errors ? Object.values(data.errors).flat().join('\n') : data.message;
+                        alert('Erro de validação:\n' + erros);
+                    } else if (response.status === 502 || response.status === 503) {
+                        // Bureau indisponível
+                        alert(data.message || 'Serviço do Bureau indisponível. Tente novamente mais tarde.');
+                    } else if (response.ok) {
+                        // Sucesso — exibir resultado
+                        exibirResultado(data);
+                    } else {
+                        alert(data.message || 'Ocorreu um erro inesperado.');
+                    }
+                } catch (error) {
+                    alert('Erro de conexão. Verifique sua internet e tente novamente.');
+                } finally {
+                    setLoading(false);
+                }
+            });
         });
     </script>
 </body>
