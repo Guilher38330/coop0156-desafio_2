@@ -177,7 +177,7 @@ class AnaliseCreditoTest extends TestCase
     // Testes de Contratação
     // =========================================================================
 
-    public function test_contratacao_analise_aprovada(): void
+public function test_contratacao_analise_aprovada(): void
     {
         \Illuminate\Support\Facades\Queue::fake();
 
