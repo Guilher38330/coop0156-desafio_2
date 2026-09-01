@@ -232,8 +232,46 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const btnConfirmar = document.getElementById('btn-confirmar');
+            const txtConfirmar = document.getElementById('txt-confirmar');
+            const spinnerConfirmar = document.getElementById('spinner-confirmar');
+            const modalSucesso = document.getElementById('modal-sucesso');
 
-            // TODO: Implementar o clique do botão de confirmação.
+            btnConfirmar.addEventListener('click', async () => {
+                // Desabilitar botão e exibir spinner
+                btnConfirmar.disabled = true;
+                txtConfirmar.classList.add('hidden');
+                spinnerConfirmar.classList.remove('hidden');
+
+                try {
+                    const response = await fetch('/api/analise-credito/{{ $analise->id }}/contratar', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Sucesso — exibir modal
+                        modalSucesso.classList.remove('hidden');
+                    } else {
+                        // Erro — exibir mensagem
+                        alert(data.message || 'Erro ao processar a contratação.');
+                        // Restaurar botão
+                        btnConfirmar.disabled = false;
+                        txtConfirmar.classList.remove('hidden');
+                        spinnerConfirmar.classList.add('hidden');
+                    }
+                } catch (error) {
+                    alert('Erro de conexão. Verifique sua internet e tente novamente.');
+                    // Restaurar botão
+                    btnConfirmar.disabled = false;
+                    txtConfirmar.classList.remove('hidden');
+                    spinnerConfirmar.classList.add('hidden');
+                }
+            });
         });
     </script>
 
