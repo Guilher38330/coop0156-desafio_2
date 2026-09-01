@@ -177,8 +177,10 @@ class AnaliseCreditoTest extends TestCase
     // Testes de Contratação
     // =========================================================================
 
-    public function test_contratacao_analise_aprovada(): void
+public function test_contratacao_analise_aprovada(): void
     {
+        \Illuminate\Support\Facades\Queue::fake();
+
         $cliente = Cliente::create([
             'nome'         => 'João da Silva',
             'cpf'          => '12345678903',
@@ -202,12 +204,16 @@ class AnaliseCreditoTest extends TestCase
         $response = $this->postJson("/api/analise-credito/{$analise->id}/contratar");
 
         $response->assertStatus(200)
-            ->assertJsonFragment(['status' => 'contratado']);
+            ->assertJsonFragment(['status' => 'processando_contratacao']);
 
         $this->assertDatabaseHas('analises_credito', [
             'id'     => $analise->id,
-            'status' => 'contratado',
+            'status' => 'processando_contratacao',
         ]);
+
+        \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\ProcessarContratacaoJob::class, function ($job) use ($analise) {
+            return $job->analiseId === $analise->id;
+        });
     }
 
     public function test_contratacao_analise_nao_aprovada(): void
