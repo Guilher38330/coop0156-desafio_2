@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\StatusAnalise;
+use App\Jobs\ProcessarContratacaoJob;
 use App\Models\AnaliseCredito;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
@@ -122,7 +123,7 @@ class AnaliseCreditoService
     }
 
     /**
-     * Confirma a contratação de uma análise aprovada.
+     * Inicia a contratação de uma análise aprovada via Fila.
      *
      * @param  int  $id  ID da análise
      * @return AnaliseCredito
@@ -140,7 +141,11 @@ class AnaliseCreditoService
             );
         }
 
-        $analise->update(['status' => StatusAnalise::CONTRATADO]);
+        // Atualiza para o estado transitório
+        $analise->update(['status' => StatusAnalise::PROCESSANDO_CONTRATACAO]);
+
+        // Dispara o job para a fila
+        ProcessarContratacaoJob::dispatch($analise->id);
 
         return $analise;
     }
