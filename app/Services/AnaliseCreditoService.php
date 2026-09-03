@@ -57,7 +57,9 @@ class AnaliseCreditoService
         $rendaMensal     = (float) $dados['renda_mensal'];
         $valorSolicitado = (float) $dados['valor_solicitado'];
 
-        // 1. Transação: localizar/criar cliente + criar análise pendente
+        /**
+         * 1. Transação atômica: localizar ou cadastrar cliente + criar análise pendente.
+         */
         [$cliente, $analise] = DB::transaction(function () use ($dados) {
             $cliente = Cliente::firstOrCreate(
                 ['cpf' => $dados['cpf']],
@@ -81,37 +83,51 @@ class AnaliseCreditoService
             return [$cliente, $analise];
         });
 
-        // 2. Verificar renda mínima (antes de chamar Bureau para economizar a chamada)
+        /**
+         * 2. Validação da renda mínima antes da chamada externa ao Bureau.
+         */
         if ($rendaMensal < self::RENDA_MINIMA) {
             return $this->reprovar($analise, null, 'Renda mínima insuficiente');
         }
 
-        // 3. Consultar Bureau de Crédito (pode lançar exceção — tratada no Controller)
+        /**
+         * 3. Consulta de score no Bureau de Crédito externo.
+         */
         $score = $this->bureauService->consultarScore($dados['cpf']);
 
-        // 4. Verificar score mínimo
+        /**
+         * 4. Validação da pontuação de score mínima para aprovação.
+         */
         if ($score < self::SCORE_MINIMO) {
             return $this->reprovar($analise, $score, 'Score de crédito muito baixo');
         }
 
-        // 5. Determinar taxa de juros com base na faixa de score
+        /**
+         * 5. Definição da taxa de juros com base na faixa de pontuação.
+         */
         $taxa = $score >= self::SCORE_ALTO
             ? self::TAXA_SCORE_ALTO
             : self::TAXA_SCORE_MEDIO;
 
-        // 6. Calcular parcela com arredondamento financeiro
+        /**
+         * 6. Cálculo financeiro da parcela com juros simples em 12 parcelas fixas.
+         */
         $jurosTotais = round($valorSolicitado * ($taxa / 100) * self::PARCELAS, 2);
         $valorTotal  = round($valorSolicitado + $jurosTotais, 2);
         $parcela     = round($valorTotal / self::PARCELAS, 2);
 
-        // 7. Verificar comprometimento de renda (parcela > 30% da renda)
+        /**
+         * 7. Validação de comprometimento máximo de 30% da renda mensal.
+         */
         $limiteRenda = round($rendaMensal * self::COMPROMETIMENTO_MAXIMO, 2);
 
         if ($parcela > $limiteRenda) {
             return $this->reprovar($analise, $score, 'Comprometimento de renda superior a 30%', $taxa, $parcela);
         }
 
-        // 8. Aprovar
+        /**
+         * 8. Persistência dos dados de aprovação da análise.
+         */
         $analise->update([
             'status'       => StatusAnalise::APROVADO,
             'score'        => $score,
@@ -141,10 +157,11 @@ class AnaliseCreditoService
             );
         }
 
-        // Atualiza para o estado transitório
+        /**
+         * Atualização do status para transição e despacho do job para fila assíncrona.
+         */
         $analise->update(['status' => StatusAnalise::PROCESSANDO_CONTRATACAO]);
 
-        // Dispara o job para a fila
         ProcessarContratacaoJob::dispatch($analise->id);
 
         return $analise;
@@ -187,5 +204,39 @@ class AnaliseCreditoService
         $analise->update($dados);
 
         return $analise;
+    }
+
+    /**
+     * Retorna a lista paginada de análises de crédito com filtros opcionais.
+     *
+     * @param  array  $filtros
+     * @param  int    $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function listar(array $filtros = [], int $perPage = 15)
+    {
+        $query = AnaliseCredito::with('cliente')->latest('id');
+
+        if (!empty($filtros['status'])) {
+            $query->where('status', $filtros['status']);
+        }
+
+        if (!empty($filtros['cpf'])) {
+            $cpfLimpo = preg_replace('/\D/', '', $filtros['cpf']);
+            $query->where('cpf', 'like', "%{$cpfLimpo}%");
+        }
+
+        if (!empty($filtros['busca'])) {
+            $busca = $filtros['busca'];
+            $cpfLimpo = preg_replace('/\D/', '', $busca);
+            $query->where(function ($q) use ($busca, $cpfLimpo) {
+                $q->where('nome', 'like', "%{$busca}%");
+                if (!empty($cpfLimpo)) {
+                    $q->orWhere('cpf', 'like', "%{$cpfLimpo}%");
+                }
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 }

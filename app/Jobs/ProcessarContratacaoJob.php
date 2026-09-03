@@ -29,10 +29,14 @@ class ProcessarContratacaoJob implements ShouldQueue
         $analise = AnaliseCredito::find($this->analiseId);
 
         if ($analise) {
-            // Atualiza o status definitivo para contratado
+            /**
+             * Atualiza o status definitivo para contratado.
+             */
             $analise->update(['status' => StatusAnalise::CONTRATADO]);
 
-            // Registra um log de sucesso
+            /**
+             * Registra log estruturado de auditoria do processamento.
+             */
             Log::info("Contratação processada com sucesso via Fila.", [
                 'analise_id' => $analise->id,
                 'cliente_id' => $analise->cliente_id,

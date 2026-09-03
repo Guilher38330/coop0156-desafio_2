@@ -7,6 +7,7 @@ use App\Models\AnaliseCredito;
 use App\Models\Cliente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class AnaliseCreditoTest extends TestCase
@@ -41,27 +42,30 @@ class AnaliseCreditoTest extends TestCase
         ]);
     }
 
-    // =========================================================================
-    // Testes de Aprovação
-    // =========================================================================
-
+    /**
+     * Testa aprovação de crédito com score alto e aplicação da taxa de 2,9% ao mês.
+     * Parcela: 10000 * 0.029 * 12 = 3480 -> total = 13480 -> parcela = 1123.33
+     */
     public function test_aprovacao_score_alto_taxa_2_9(): void
     {
         $this->fakeBureau(850);
 
         $response = $this->postJson('/api/analise-credito', $this->payload());
 
-        // Parcela: 10000 * 0.029 * 12 = 3480 → total = 13480 → parcela = 1123.33
         $response->assertStatus(200)
             ->assertJsonFragment([
-                'status'     => 'aprovado',
-                'score'      => 850,
-                'taxa_juros' => '2.90',
+                'status'        => 'aprovado',
+                'score'         => 850,
+                'taxa_juros'    => '2.90',
                 'valor_parcela' => '1123.33',
             ])
             ->assertJsonMissing(['motivo_rejeicao' => 'Renda mínima insuficiente']);
     }
 
+    /**
+     * Testa aprovação de crédito com score médio e aplicação da taxa de 4,5% ao mês.
+     * Parcela: 5000 * 0.045 * 12 = 2700 -> total = 7700 -> parcela = 641.67
+     */
     public function test_aprovacao_score_medio_taxa_4_5(): void
     {
         $this->fakeBureau(550);
@@ -70,7 +74,6 @@ class AnaliseCreditoTest extends TestCase
             'valor_solicitado' => 5000.00,
         ]));
 
-        // Parcela: 5000 * 0.045 * 12 = 2700 → total = 7700 → parcela = 641.67
         $response->assertStatus(200)
             ->assertJsonFragment([
                 'status'        => 'aprovado',
@@ -80,13 +83,13 @@ class AnaliseCreditoTest extends TestCase
             ]);
     }
 
-    // =========================================================================
-    // Testes de Reprovação
-    // =========================================================================
-
+    /**
+     * Testa reprovação imediata por renda mensal inferior ao mínimo de R$ 1.500,00.
+     * O Bureau não deve ser consultado nessa situação.
+     */
     public function test_reprovacao_renda_insuficiente(): void
     {
-        Http::fake(); // Safety net — Bureau NÃO deve ser chamado
+        Http::fake();
 
         $response = $this->postJson('/api/analise-credito', $this->payload([
             'renda_mensal' => 1000.00,
@@ -98,10 +101,12 @@ class AnaliseCreditoTest extends TestCase
                 'motivo_rejeicao' => 'Renda mínima insuficiente',
             ]);
 
-        // Verifica que o Bureau não foi consultado (renda checada antes)
         Http::assertNothingSent();
     }
 
+    /**
+     * Testa reprovação por score retornado pelo Bureau inferior a 400 pontos.
+     */
     public function test_reprovacao_score_baixo(): void
     {
         $this->fakeBureau(150);
@@ -116,13 +121,14 @@ class AnaliseCreditoTest extends TestCase
             ]);
     }
 
+    /**
+     * Testa reprovação quando a parcela calculada ultrapassa 30% da renda mensal.
+     * Renda: 2000, Valor: 10000, Taxa: 4.5% -> Parcela: 1283.33 > Limite (600.00)
+     */
     public function test_reprovacao_comprometimento_renda(): void
     {
         $this->fakeBureau(550);
 
-        // Renda 2000, valor 10000, taxa 4.5%
-        // Parcela: 10000 * 0.045 * 12 = 5400 → total = 15400 → parcela = 1283.33
-        // Limite: 2000 * 0.30 = 600.00 → 1283.33 > 600 → reprovado
         $response = $this->postJson('/api/analise-credito', $this->payload([
             'renda_mensal'     => 2000.00,
             'valor_solicitado' => 10000.00,
@@ -135,10 +141,9 @@ class AnaliseCreditoTest extends TestCase
             ]);
     }
 
-    // =========================================================================
-    // Testes de Resiliência do Bureau
-    // =========================================================================
-
+    /**
+     * Testa a resiliência da aplicação quando o Bureau retorna erro 500.
+     */
     public function test_bureau_erro_500(): void
     {
         Http::fake([
@@ -155,13 +160,15 @@ class AnaliseCreditoTest extends TestCase
             ]);
     }
 
+    /**
+     * Testa o tratamento de resposta malformada do Bureau (sem campo 'score').
+     */
     public function test_bureau_resposta_malformada(): void
     {
         Http::fake([
             '*/api/mock/bureau/*' => Http::response([
-                'cpf'            => '12345678906',
-                'status_bureau'  => 'ok',
-                // Sem a chave 'score'
+                'cpf'           => '12345678906',
+                'status_bureau' => 'ok',
             ]),
         ]);
 
@@ -173,13 +180,12 @@ class AnaliseCreditoTest extends TestCase
             ]);
     }
 
-    // =========================================================================
-    // Testes de Contratação
-    // =========================================================================
-
-public function test_contratacao_analise_aprovada(): void
+    /**
+     * Testa a contratação de uma análise aprovada, disparando o job na fila.
+     */
+    public function test_contratacao_analise_aprovada(): void
     {
-        \Illuminate\Support\Facades\Queue::fake();
+        Queue::fake();
 
         $cliente = Cliente::create([
             'nome'         => 'João da Silva',
@@ -211,11 +217,14 @@ public function test_contratacao_analise_aprovada(): void
             'status' => 'processando_contratacao',
         ]);
 
-        \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\ProcessarContratacaoJob::class, function ($job) use ($analise) {
+        Queue::assertPushed(\App\Jobs\ProcessarContratacaoJob::class, function ($job) use ($analise) {
             return $job->analiseId === $analise->id;
         });
     }
 
+    /**
+     * Testa rejeição ao tentar contratar uma análise que não está com status aprovado.
+     */
     public function test_contratacao_analise_nao_aprovada(): void
     {
         $cliente = Cliente::create([
@@ -243,6 +252,9 @@ public function test_contratacao_analise_aprovada(): void
             ]);
     }
 
+    /**
+     * Testa erro 404 ao tentar contratar uma análise com ID inexistente.
+     */
     public function test_contratacao_analise_inexistente(): void
     {
         $response = $this->postJson('/api/analise-credito/9999/contratar');
@@ -250,10 +262,9 @@ public function test_contratacao_analise_aprovada(): void
         $response->assertStatus(404);
     }
 
-    // =========================================================================
-    // Testes de Criação Automática de Cliente
-    // =========================================================================
-
+    /**
+     * Testa a criação automática de um novo cliente ao solicitar análise com CPF inédito.
+     */
     public function test_criacao_automatica_cliente_cpf_novo(): void
     {
         $this->fakeBureau(850);
@@ -268,28 +279,47 @@ public function test_contratacao_analise_aprovada(): void
 
         $response->assertStatus(200);
 
-        // O cliente foi criado automaticamente
         $this->assertDatabaseHas('clientes', [
             'cpf'  => $cpf,
             'nome' => 'João da Silva',
         ]);
 
-        // A análise está vinculada ao cliente
         $this->assertDatabaseHas('analises_credito', [
             'cpf'    => $cpf,
             'status' => 'aprovado',
         ]);
     }
 
-    // =========================================================================
-    // Testes de Validação
-    // =========================================================================
-
+    /**
+     * Testa falha de validação (HTTP 422) ao submeter formulário sem campos obrigatórios.
+     */
     public function test_validacao_campos_obrigatorios(): void
     {
         $response = $this->postJson('/api/analise-credito', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['nome', 'cpf', 'renda_mensal', 'tipo_credito', 'valor_solicitado']);
+    }
+
+    /**
+     * Testa bloqueio por Rate Limit (HTTP 429) após ultrapassar 15 requisições por minuto.
+     */
+    public function test_bloqueio_por_rate_limit_apos_muitas_tentativas(): void
+    {
+        $this->fakeBureau(850);
+
+        for ($i = 0; $i < 15; $i++) {
+            $response = $this->withHeaders(['X-Test-Rate-Limit' => 'true'])
+                ->postJson('/api/analise-credito', $this->payload());
+            $response->assertStatus(200);
+        }
+
+        $responseBloqueada = $this->withHeaders(['X-Test-Rate-Limit' => 'true'])
+            ->postJson('/api/analise-credito', $this->payload());
+
+        $responseBloqueada->assertStatus(429)
+            ->assertJsonFragment([
+                'message' => 'Muitas solicitações de análise de crédito. Por favor, aguarde um instante e tente novamente.',
+            ]);
     }
 }
