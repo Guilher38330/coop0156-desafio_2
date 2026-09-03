@@ -24,10 +24,9 @@ class ClienteTest extends TestCase
         ], $overrides);
     }
 
-    // =========================================================================
-    // Criação (Store)
-    // =========================================================================
-
+    /**
+     * Testa criação de cliente com dados válidos (HTTP 201).
+     */
     public function test_criacao_cliente_dados_validos(): void
     {
         $response = $this->postJson('/api/clientes', $this->payload());
@@ -42,6 +41,9 @@ class ClienteTest extends TestCase
         $this->assertDatabaseHas('clientes', ['cpf' => '12345678901']);
     }
 
+    /**
+     * Testa falha de validação (HTTP 422) ao omitir campos obrigatórios no cadastro.
+     */
     public function test_validacao_campos_obrigatorios(): void
     {
         $response = $this->postJson('/api/clientes', []);
@@ -50,40 +52,44 @@ class ClienteTest extends TestCase
             ->assertJsonValidationErrors(['nome', 'cpf', 'email', 'renda_mensal']);
     }
 
+    /**
+     * Testa rejeição (HTTP 422) ao tentar cadastrar cliente com CPF já existente.
+     */
     public function test_cpf_duplicado(): void
     {
         Cliente::create($this->payload());
 
         $response = $this->postJson('/api/clientes', $this->payload([
-            'email' => 'outro@example.com', // E-mail diferente para forçar erro apenas no CPF
+            'email' => 'outro@example.com',
         ]));
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['cpf']);
     }
 
+    /**
+     * Testa rejeição (HTTP 422) ao tentar cadastrar cliente com e-mail já existente.
+     */
     public function test_email_duplicado(): void
     {
         Cliente::create($this->payload());
 
         $response = $this->postJson('/api/clientes', $this->payload([
-            'cpf' => '10987654321', // CPF diferente para forçar erro apenas no E-mail
+            'cpf' => '10987654321',
         ]));
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['email']);
     }
 
-    // =========================================================================
-    // Listagem e Exibição (Index & Show)
-    // =========================================================================
-
+    /**
+     * Testa listagem paginada de clientes com tamanho padrão de página.
+     */
     public function test_listagem_paginada(): void
     {
-        // Criar 20 clientes para testar paginação (padrão é 15)
         for ($i = 0; $i < 20; $i++) {
             Cliente::create($this->payload([
-                'cpf'   => str_pad((string)$i, 11, '0', STR_PAD_LEFT),
+                'cpf'   => str_pad((string) $i, 11, '0', STR_PAD_LEFT),
                 'email' => "teste{$i}@example.com",
             ]));
         }
@@ -98,10 +104,12 @@ class ClienteTest extends TestCase
                 'total',
             ]);
 
-        // Verifica se retornou 15 itens na primeira página
         $this->assertCount(15, $response->json('data'));
     }
 
+    /**
+     * Testa exibição dos dados de um cliente existente por ID.
+     */
     public function test_exibicao_cliente_existente(): void
     {
         $cliente = Cliente::create($this->payload());
@@ -115,6 +123,9 @@ class ClienteTest extends TestCase
             ]);
     }
 
+    /**
+     * Testa retorno 404 ao buscar um cliente com ID inexistente.
+     */
     public function test_exibicao_cliente_inexistente(): void
     {
         $response = $this->getJson('/api/clientes/9999');
@@ -122,10 +133,9 @@ class ClienteTest extends TestCase
         $response->assertStatus(404);
     }
 
-    // =========================================================================
-    // Atualização (Update)
-    // =========================================================================
-
+    /**
+     * Testa atualização parcial dos dados de um cliente existente.
+     */
     public function test_atualizacao_parcial(): void
     {
         $cliente = Cliente::create($this->payload());
@@ -138,7 +148,7 @@ class ClienteTest extends TestCase
             ->assertJsonFragment([
                 'id'   => $cliente->id,
                 'nome' => 'Nome Atualizado',
-                'cpf'  => '12345678901', // Mantém o restante igual
+                'cpf'  => '12345678901',
             ]);
 
         $this->assertDatabaseHas('clientes', [
@@ -147,21 +157,23 @@ class ClienteTest extends TestCase
         ]);
     }
 
-    // =========================================================================
-    // Remoção (Destroy)
-    // =========================================================================
-
+    /**
+     * Testa remoção de cliente existente (HTTP 204 No Content).
+     */
     public function test_remocao_cliente(): void
     {
         $cliente = Cliente::create($this->payload());
 
         $response = $this->deleteJson("/api/clientes/{$cliente->id}");
 
-        $response->assertStatus(204); // No Content
-        
+        $response->assertStatus(204);
+
         $this->assertDatabaseMissing('clientes', ['id' => $cliente->id]);
     }
 
+    /**
+     * Testa retorno 404 ao tentar remover um cliente inexistente.
+     */
     public function test_remocao_cliente_inexistente(): void
     {
         $response = $this->deleteJson('/api/clientes/9999');

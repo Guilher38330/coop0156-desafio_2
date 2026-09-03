@@ -7,13 +7,29 @@ use App\Models\Cliente;
 class ClienteService
 {
     /**
-     * Retorna a lista paginada de clientes.
+     * Retorna a lista paginada de clientes com suporte a busca.
      *
+     * @param  string|null  $busca
+     * @param  int  $perPage
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function listar()
+    public function listar(?string $busca = null, int $perPage = 15)
     {
-        return Cliente::paginate(15);
+        $query = Cliente::query()->latest('id');
+
+        if ($busca) {
+            $cpfLimpo = preg_replace('/\D/', '', $busca);
+            $query->where(function ($q) use ($busca, $cpfLimpo) {
+                $q->where('nome', 'like', "%{$busca}%")
+                  ->orWhere('email', 'like', "%{$busca}%");
+
+                if (!empty($cpfLimpo)) {
+                    $q->orWhere('cpf', 'like', "%{$cpfLimpo}%");
+                }
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
@@ -69,5 +85,20 @@ class ClienteService
     {
         $cliente = Cliente::findOrFail($id);
         $cliente->delete();
+    }
+
+    /**
+     * Retorna o histórico de análises de crédito de um cliente.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function obterAnalises(int $id)
+    {
+        $cliente = Cliente::findOrFail($id);
+
+        return $cliente->analises()->latest()->get();
     }
 }

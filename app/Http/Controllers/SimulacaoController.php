@@ -20,7 +20,9 @@ class SimulacaoController extends Controller
     {
         $analise = AnaliseCredito::findOrFail($id);
 
-        // Só exibe a simulação para análises aprovadas
+        /**
+         * Permite a visualização da simulação exclusivamente para análises aprovadas.
+         */
         if ($analise->status !== StatusAnalise::APROVADO) {
             return redirect('/')->with('erro', 'Esta análise não está disponível para simulação.');
         }

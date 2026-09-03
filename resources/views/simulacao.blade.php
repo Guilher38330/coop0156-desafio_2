@@ -38,26 +38,47 @@
 </head>
 <body class="text-slate-200 min-h-screen flex flex-col font-sans">
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
+
     <!-- Header -->
-    <header class="border-b border-panelBorder/50 py-5 glass-panel sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
-            <a href="/" class="flex items-center gap-3 group">
-                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <header class="border-b border-panelBorder/50 py-4 glass-panel sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">Coop0156</h1>
+                        <p class="text-xs text-slate-400">Plataforma de Crédito Cooperativo</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center gap-1 sm:gap-2">
+                <a href="/" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">Coop0156</h1>
-                    <p class="text-xs text-slate-400">Desafio Análise de Crédito</p>
-                </div>
-            </a>
-            <a href="/" class="text-sm text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Nova Análise
-            </a>
+                    Simular Crédito
+                </a>
+                <a href="/clientes" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Cooperados (Clientes)
+                </a>
+                <a href="/analises" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Histórico & KPIs
+                </a>
+            </nav>
         </div>
     </header>
 
@@ -204,31 +225,27 @@
                 </svg>
             </div>
             <h3 class="text-2xl font-bold text-white mb-2">Contratação Realizada!</h3>
-            <p class="text-slate-400 text-sm mb-6">O crédito foi contratado com sucesso. Você receberá uma confirmação em breve.</p>
+            <p class="text-slate-400 text-sm mb-6">O crédito foi encaminhado para processamento e contratação com sucesso.</p>
             <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3 mb-6 text-xs text-emerald-400 font-mono">
-                Status: CONTRATADO
+                Status: PROCESSANDO_CONTRATACAO / CONTRATADO
             </div>
-            <a href="/" class="inline-block px-8 py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 rounded-xl text-sm font-medium transition-all">
-                Iniciar Nova Simulação
-            </a>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/analises" class="px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 rounded-xl text-sm font-medium transition-all">
+                    Ver no Histórico
+                </a>
+                <a href="/" class="px-6 py-3 bg-slate-800 border border-panelBorder text-slate-300 hover:bg-slate-700 rounded-xl text-sm font-medium transition-all">
+                    Nova Simulação
+                </a>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-panelBorder/40 py-6 text-center text-xs text-slate-600">
+    <footer class="border-t border-panelBorder/40 py-6 text-center text-xs text-slate-600 mt-auto">
         <p>&copy; 2026 Coop0156. Desafio Técnico Laravel.</p>
     </footer>
 
-    <!--
-      -- =========================================================================
-      -- INSTRUÇÕES (CANDIDATO): Implemente o JavaScript abaixo.
-      -- =========================================================================
-      -- Ao clicar em "Confirmar Contratação", o candidato deve:
-      --   1. Mostrar o spinner e desabilitar o botão para evitar clique duplo.
-      --   2. Fazer requisição POST para '/api/analise-credito/{{ $analise->id }}/contratar'.
-      --   3. Em caso de sucesso (HTTP 200), exibir o modal de sucesso (#modal-sucesso).
-      --   4. Em caso de erro, exibir uma mensagem de feedback adequada para o usuário.
-      -->
+    <!-- Script de Contratação e Toasts -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const btnConfirmar = document.getElementById('btn-confirmar');
@@ -236,8 +253,39 @@
             const spinnerConfirmar = document.getElementById('spinner-confirmar');
             const modalSucesso = document.getElementById('modal-sucesso');
 
+            // Sistema de Toasts
+            function mostrarToast(mensagem, tipo = 'sucesso') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `p-4 rounded-xl text-sm shadow-xl border flex items-start gap-3 transform transition-all duration-300 pointer-events-auto ${
+                    tipo === 'sucesso' 
+                        ? 'bg-emerald-950/90 border-emerald-500/30 text-emerald-200' 
+                        : tipo === 'erro' 
+                        ? 'bg-red-950/90 border-red-500/30 text-red-200' 
+                        : 'bg-blue-950/90 border-blue-500/30 text-blue-200'
+                }`;
+
+                const icone = tipo === 'sucesso'
+                    ? '<svg class="h-5 w-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+                    : '<svg class="h-5 w-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+
+                toast.innerHTML = `
+                    ${icone}
+                    <div class="flex-grow">
+                        <p class="font-medium">${tipo === 'sucesso' ? 'Sucesso' : 'Atenção'}</p>
+                        <p class="text-xs mt-0.5 opacity-90">${mensagem.replace(/\n/g, '<br>')}</p>
+                    </div>
+                `;
+
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-10px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
             btnConfirmar.addEventListener('click', async () => {
-                // Desabilitar botão e exibir spinner
                 btnConfirmar.disabled = true;
                 txtConfirmar.classList.add('hidden');
                 spinnerConfirmar.classList.remove('hidden');
@@ -254,19 +302,16 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        // Sucesso — exibir modal
                         modalSucesso.classList.remove('hidden');
+                        mostrarToast('Contratação enviada para a fila de processamento!', 'sucesso');
                     } else {
-                        // Erro — exibir mensagem
-                        alert(data.message || 'Erro ao processar a contratação.');
-                        // Restaurar botão
+                        mostrarToast(data.message || 'Erro ao processar a contratação.', 'erro');
                         btnConfirmar.disabled = false;
                         txtConfirmar.classList.remove('hidden');
                         spinnerConfirmar.classList.add('hidden');
                     }
                 } catch (error) {
-                    alert('Erro de conexão. Verifique sua internet e tente novamente.');
-                    // Restaurar botão
+                    mostrarToast('Erro de conexão. Verifique sua internet e tente novamente.', 'erro');
                     btnConfirmar.disabled = false;
                     txtConfirmar.classList.remove('hidden');
                     spinnerConfirmar.classList.add('hidden');

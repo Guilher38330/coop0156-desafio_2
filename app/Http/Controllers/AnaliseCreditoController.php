@@ -7,12 +7,35 @@ use App\Exceptions\BureauRespostaMalformadaException;
 use App\Http\Requests\SolicitarAnaliseRequest;
 use App\Services\AnaliseCreditoService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 class AnaliseCreditoController extends Controller
 {
     public function __construct(
         private readonly AnaliseCreditoService $analiseCreditoService
     ) {}
+
+    /**
+     * Lista as análises de crédito com filtros opcionais.
+     *
+     * GET /api/analises-credito
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
+    {
+        $filtros = [
+            'status' => $request->query('status'),
+            'cpf'    => $request->query('cpf'),
+            'busca'  => $request->query('busca'),
+        ];
+        $perPage = (int) $request->query('per_page', 15);
+
+        $analises = $this->analiseCreditoService->listar($filtros, $perPage);
+
+        return response()->json($analises);
+    }
 
     /**
      * Solicita uma nova análise de crédito.

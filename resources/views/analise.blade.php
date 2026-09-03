@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Crédito Cooperativo</title>
+    <title>Plataforma de Crédito Cooperativo — Coop0156</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,25 +51,47 @@
 </head>
 <body class="text-slate-200 min-h-screen flex flex-col font-sans">
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
+
     <!-- Header / Navbar -->
-    <header class="border-b border-panelBorder/50 py-5 glass-panel sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+    <header class="border-b border-panelBorder/50 py-4 glass-panel sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <a href="/" class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">Coop0156</h1>
+                        <p class="text-xs text-slate-400">Plataforma de Crédito Cooperativo</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center gap-1 sm:gap-2">
+                <a href="/" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">Coop0156</h1>
-                    <p class="text-xs text-slate-400">Desafio Análise de Crédito</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Ambiente de Testes
-                </span>
-            </div>
+                    Simular Crédito
+                </a>
+                <a href="/clientes" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Cooperados (Clientes)
+                </a>
+                <a href="/analises" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Histórico & KPIs
+                </a>
+            </nav>
         </div>
     </header>
 
@@ -96,15 +118,23 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- CPF -->
                     <div>
-                        <label for="cpf" class="block text-sm font-medium text-slate-400 mb-2">CPF</label>
-                        <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00"
-                            class="w-full bg-slate-950/50 border border-panelBorder rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="cpf" class="block text-sm font-medium text-slate-400">CPF</label>
+                            <span id="cpf-status" class="text-xs hidden font-medium"></span>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00" maxlength="14"
+                                class="w-full bg-slate-950/50 border border-panelBorder rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all font-mono">
+                            <div id="cpf-icon" class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none hidden">
+                                <!-- Ícone dinâmico de validação de CPF -->
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Renda Mensal -->
                     <div>
                         <label for="renda_mensal" class="block text-sm font-medium text-slate-400 mb-2">Renda Mensal (R$)</label>
-                        <input type="number" step="0.01" id="renda_mensal" name="renda_mensal" required placeholder="Ex: 3500.00"
+                        <input type="text" id="renda_mensal" name="renda_mensal" required placeholder="R$ 3.500,00"
                             class="w-full bg-slate-950/50 border border-panelBorder rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                     </div>
                 </div>
@@ -125,7 +155,7 @@
                     <!-- Valor Solicitado -->
                     <div>
                         <label for="valor_solicitado" class="block text-sm font-medium text-slate-400 mb-2">Valor Requerido (R$)</label>
-                        <input type="number" step="0.01" id="valor_solicitado" name="valor_solicitado" required placeholder="Ex: 15000.00"
+                        <input type="text" id="valor_solicitado" name="valor_solicitado" required placeholder="R$ 15.000,00"
                             class="w-full bg-slate-950/50 border border-panelBorder rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                     </div>
                 </div>
@@ -173,11 +203,11 @@
                     </div>
                     <div class="flex justify-between pt-4">
                         <span class="text-slate-400 text-sm">CPF</span>
-                        <span id="res-cpf" class="font-medium text-slate-100">-</span>
+                        <span id="res-cpf" class="font-medium text-slate-100 font-mono">-</span>
                     </div>
                     <div class="flex justify-between pt-4">
                         <span class="text-slate-400 text-sm">Score de Crédito</span>
-                        <span id="res-score" class="font-medium text-slate-100">-</span>
+                        <span id="res-score" class="font-medium text-slate-100 font-mono">-</span>
                     </div>
                     <div class="flex justify-between pt-4">
                         <span class="text-slate-400 text-sm">Status da Análise</span>
@@ -245,30 +275,25 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-panelBorder/40 py-6 text-center text-xs text-slate-600">
+    <footer class="border-t border-panelBorder/40 py-6 text-center text-xs text-slate-600 mt-auto">
         <div class="max-w-6xl mx-auto px-4">
             <p>&copy; 2026 CoopCred. Todos os direitos reservados. Desafio Técnico Laravel.</p>
         </div>
     </footer>
 
-    <!--
-      -- =========================================================================
-      -- INSTRUÇÕES DE IMPLEMENTAÇÃO JAVASCRIPT (DESAFIO PARA O CANDIDATO)
-      -- =========================================================================
-      -- O candidato deve escrever o JavaScript abaixo para integrar com as APIs.
-      -- Requisitos:
-      --   1. Tratar a submissão do formulário 'form-analise'.
-      --   2. Fazer requisição POST para '/api/analise-credito' com os dados do form.
-      --   3. Se REPROVADO: exibir o card de resultado com o motivo da recusa.
-      --   4. Se APROVADO: exibir o card de resultado e um botão/link que redirecione
-      --      o usuário para '/simulacao/{id}' para visualizar as condições antes de contratar.
-      -->
+    <!-- JavaScript com Máscaras, Toasts e Validações -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('form-analise');
             const btnSolicitar = document.getElementById('btn-solicitar');
             const txtSolicitar = document.getElementById('txt-solicitar');
             const loadingSpinner = document.getElementById('loading-spinner');
+
+            const inputCpf = document.getElementById('cpf');
+            const inputRenda = document.getElementById('renda_mensal');
+            const inputValor = document.getElementById('valor_solicitado');
+            const inputNome = document.getElementById('nome');
+            const selectTipo = document.getElementById('tipo_credito');
 
             // Elementos de resultado
             const resultadoVazio = document.getElementById('resultado-vazio');
@@ -278,46 +303,113 @@
             const dadosReprovado = document.getElementById('dados-reprovado');
             const containerContratacao = document.getElementById('container-contratacao');
 
-            /**
-             * Formata um valor numérico para moeda brasileira (R$ X.XXX,XX).
-             */
+            // Sistema de Toasts
+            function mostrarToast(mensagem, tipo = 'sucesso') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `p-4 rounded-xl text-sm shadow-xl border flex items-start gap-3 transform transition-all duration-300 pointer-events-auto ${
+                    tipo === 'sucesso' 
+                        ? 'bg-emerald-950/90 border-emerald-500/30 text-emerald-200' 
+                        : tipo === 'erro' 
+                        ? 'bg-red-950/90 border-red-500/30 text-red-200' 
+                        : 'bg-blue-950/90 border-blue-500/30 text-blue-200'
+                }`;
+
+                const icone = tipo === 'sucesso'
+                    ? '<svg class="h-5 w-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+                    : '<svg class="h-5 w-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+
+                toast.innerHTML = `
+                    ${icone}
+                    <div class="flex-grow">
+                        <p class="font-medium">${tipo === 'sucesso' ? 'Sucesso' : 'Atenção'}</p>
+                        <p class="text-xs mt-0.5 opacity-90">${mensagem.replace(/\n/g, '<br>')}</p>
+                    </div>
+                `;
+
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-10px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            // Formatação Monetária
             function formatarMoeda(valor) {
-                return parseFloat(valor).toLocaleString('pt-BR', {
+                return parseFloat(valor || 0).toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',
                 });
             }
 
-            /**
-             * Alterna o estado de loading do botão de submit.
-             */
+            function desformatarMoeda(valor) {
+                if (typeof valor === 'number') return valor;
+                return parseFloat(String(valor).replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+            }
+
+            // Máscara e Validação de CPF
+            function formatarCPFInput(v) {
+                v = v.replace(/\D/g, '').slice(0, 11);
+                if (v.length > 9) return v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+                if (v.length > 6) return v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+                if (v.length > 3) return v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+                return v;
+            }
+
+            inputCpf.addEventListener('input', (e) => {
+                e.target.value = formatarCPFInput(e.target.value);
+            });
+
+            // Máscara monetária nos inputs
+            function aplicarMascaraMoeda(input) {
+                input.addEventListener('input', (e) => {
+                    let v = e.target.value.replace(/\D/g, '');
+                    if (!v) { e.target.value = ''; return; }
+                    const num = parseFloat(v) / 100;
+                    e.target.value = num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                });
+            }
+            aplicarMascaraMoeda(inputRenda);
+            aplicarMascaraMoeda(inputValor);
+
+            // Pré-preenchimento vindo da URL (caso venha de /clientes)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('cpf')) {
+                inputCpf.value = formatarCPFInput(urlParams.get('cpf'));
+            }
+            if (urlParams.get('nome')) {
+                inputNome.value = urlParams.get('nome');
+            }
+            if (urlParams.get('renda')) {
+                const rendaNum = parseFloat(urlParams.get('renda')) || 0;
+                inputRenda.value = rendaNum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            // Loading do botão de submit
             function setLoading(loading) {
                 btnSolicitar.disabled = loading;
                 txtSolicitar.classList.toggle('hidden', loading);
                 loadingSpinner.classList.toggle('hidden', !loading);
             }
 
-            /**
-             * Exibe o card de resultado com os dados da análise.
-             */
+            // Exibir card de resultado
             function exibirResultado(analise) {
                 resultadoVazio.classList.add('hidden');
                 resultadoAnalise.classList.remove('hidden');
 
                 // Preencher dados comuns
                 document.getElementById('res-nome').textContent = analise.nome;
-                document.getElementById('res-cpf').textContent = analise.cpf;
+                document.getElementById('res-cpf').textContent = formatarCPFInput(analise.cpf);
                 document.getElementById('res-score').textContent = analise.score ?? '—';
 
                 const statusEl = document.getElementById('res-status');
 
                 if (analise.status === 'aprovado') {
-                    // Status e badge
                     statusEl.textContent = 'APROVADO';
                     statusEl.className = 'font-bold text-emerald-400';
                     statusBadge.innerHTML = '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aprovado</span>';
 
-                    // Dados de aprovação
                     dadosAprovado.classList.remove('hidden');
                     dadosReprovado.classList.add('hidden');
                     document.getElementById('res-taxa').textContent = parseFloat(analise.taxa_juros).toFixed(1).replace('.', ',') + '% a.m.';
@@ -326,7 +418,6 @@
                     const comprometimento = ((parseFloat(analise.valor_parcela) / parseFloat(analise.renda_mensal)) * 100).toFixed(1);
                     document.getElementById('res-comprometimento').textContent = comprometimento.replace('.', ',') + '%';
 
-                    // Botão para simulação
                     containerContratacao.classList.remove('hidden');
                     const btnContratar = document.getElementById('btn-contratar');
                     const txtContratar = document.getElementById('txt-contratar');
@@ -336,12 +427,10 @@
                         window.location.href = '/simulacao/' + analise.id;
                     };
                 } else {
-                    // Status e badge
                     statusEl.textContent = 'REPROVADO';
                     statusEl.className = 'font-bold text-red-400';
                     statusBadge.innerHTML = '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">Reprovado</span>';
 
-                    // Dados de reprovação
                     dadosReprovado.classList.remove('hidden');
                     dadosAprovado.classList.add('hidden');
                     containerContratacao.classList.add('hidden');
@@ -354,16 +443,15 @@
                 e.preventDefault();
                 setLoading(true);
 
-                // Coletar dados e limpar CPF
-                const cpfRaw = document.getElementById('cpf').value;
+                const cpfRaw = inputCpf.value;
                 const cpf = cpfRaw.replace(/\D/g, '');
 
                 const payload = {
-                    nome: document.getElementById('nome').value,
+                    nome: inputNome.value,
                     cpf: cpf,
-                    renda_mensal: parseFloat(document.getElementById('renda_mensal').value),
-                    tipo_credito: document.getElementById('tipo_credito').value,
-                    valor_solicitado: parseFloat(document.getElementById('valor_solicitado').value),
+                    renda_mensal: desformatarMoeda(inputRenda.value),
+                    tipo_credito: selectTipo.value,
+                    valor_solicitado: desformatarMoeda(inputValor.value),
                 };
 
                 try {
@@ -379,20 +467,18 @@
                     const data = await response.json();
 
                     if (response.status === 422) {
-                        // Erros de validação
                         const erros = data.errors ? Object.values(data.errors).flat().join('\n') : data.message;
-                        alert('Erro de validação:\n' + erros);
+                        mostrarToast(erros, 'erro');
                     } else if (response.status === 502 || response.status === 503) {
-                        // Bureau indisponível
-                        alert(data.message || 'Serviço do Bureau indisponível. Tente novamente mais tarde.');
+                        mostrarToast(data.message || 'Serviço do Bureau indisponível. Tente novamente mais tarde.', 'erro');
                     } else if (response.ok) {
-                        // Sucesso — exibir resultado
                         exibirResultado(data);
+                        mostrarToast('Análise de crédito concluída com sucesso!', 'sucesso');
                     } else {
-                        alert(data.message || 'Ocorreu um erro inesperado.');
+                        mostrarToast(data.message || 'Ocorreu um erro inesperado.', 'erro');
                     }
                 } catch (error) {
-                    alert('Erro de conexão. Verifique sua internet e tente novamente.');
+                    mostrarToast('Erro de conexão. Verifique sua internet e tente novamente.', 'erro');
                 } finally {
                     setLoading(false);
                 }
